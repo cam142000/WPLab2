@@ -82,7 +82,6 @@ class Bee {
 
 function getRandomInt(dimension) {
   //random() returns random float between 0 and 1
-  console.log(Math.floor(Math.random() * dimension));
   return Math.floor(Math.floor(Math.random() * dimension));
 }
 
@@ -126,6 +125,7 @@ function start() {
   bees = new Array();
 
   makeBees();
+  updateBees();
 }
 
 // Handle keyboad events
@@ -186,7 +186,18 @@ function updateBees() {
   //move the bees randomly
   moveBees();
   //use a fixed update period
-  let period = 10; //modify this to control refresh period
+  let e = document.getElementById("periodTimer");
+  let period = e.value; //modify this to control refresh period
   //update the timer for the next move
   updateTimer = setTimeout("updateBees()", period);
+}
+
+function updateNBees(e) {
+  if (event.key === "Enter") {
+    //gets board div
+    var board = document.getElementById("board");
+    //removes all bees from board
+    board.innerHTML = '<img src="./resources/bear.gif" id="bear" alt="bear">';
+    start();
+  }
 }
