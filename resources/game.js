@@ -178,10 +178,16 @@ function moveBees() {
     let dx = getRandomInt(2 * speed) - speed;
     let dy = getRandomInt(2 * speed) - speed;
     bees[i].move(dx, dy);
+
+    isHit(bees[i], bear);
   }
 }
 
 function updateBees() {
+  if (document.getElementById("hits").innerHTML >= 1000) {
+    clearTimeout(updateTimer);
+    alert("GAME OVER!");
+  }
   // update loop for game
   //move the bees randomly
   moveBees();
@@ -200,4 +206,51 @@ function updateNBees(e) {
     board.innerHTML = '<img src="./resources/bear.gif" id="bear" alt="bear">';
     start();
   }
+}
+
+function isHit(defender, offender) {
+  if (overlap(defender, offender)) {
+    //check if the two image overlap
+    let score = hits.innerHTML;
+    score = Number(score) + 1; //increment the score
+    hits.innerHTML = score; //display the new score
+
+    let newStingTime = new Date();
+    let thisDuration = newStingTime - lastStingTime;
+    //console.log("dur" + thisDuration);
+    lastStingTime = newStingTime;
+    console.log(lastStingTime);
+    let longestDuration = duration.innerHTML;
+    if (longestDuration === 0) {
+      longestDuration = thisDuration;
+    } else {
+      if (longestDuration < thisDuration)
+        longestDuration = Number(thisDuration);
+      //console.log("long" + longestDuration);
+    }
+    document.getElementById("duration").innerHTML = "" + longestDuration;
+  }
+}
+
+function overlap(element1, element2) {
+  //consider the two rectangles wrapping the two elements
+  //rectangle of the first element
+  left1 = element1.htmlElement.offsetLeft;
+  top1 = element1.htmlElement.offsetTop;
+  right1 = element1.htmlElement.offsetLeft + element1.htmlElement.offsetWidth;
+  bottom1 = element1.htmlElement.offsetTop + element1.htmlElement.offsetHeight;
+  //rectangle of the second element
+  left2 = element2.htmlElement.offsetLeft; //e2x
+  top2 = element2.htmlElement.offsetTop; //e2y
+  right2 = element2.htmlElement.offsetLeft + element2.htmlElement.offsetWidth;
+  bottom2 = element2.htmlElement.offsetTop + element2.htmlElement.offsetHeight;
+  //calculate the intersection of the two rectangles
+  x_intersect = Math.max(0, Math.min(right1, right2) - Math.max(left1, left2));
+  y_intersect = Math.max(0, Math.min(bottom1, bottom2) - Math.max(top1, top2));
+  intersectArea = x_intersect * y_intersect;
+  //if intersection is nil no hit
+  if (intersectArea == 0 || isNaN(intersectArea)) {
+    return false;
+  }
+  return true;
 }
